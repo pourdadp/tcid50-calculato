@@ -11,7 +11,7 @@ This tool calculates **log₁₀(TCID₅₀)** and the **virus titer** directly 
 - No installation needed – runs entirely in your web browser
 
 ## 🚀 Live Demo
-[Click here to use the calculator](https://pourdadp.github.io/tcid50-calculato/)
+[Click here to use the calculator](https://pourdadp.github.io/tcid50-calculato/main)
 
 ## 👨‍🔬 Author
 **Pourdad Panahi** – Biotechnologist transitioning into Bioinformatics.
