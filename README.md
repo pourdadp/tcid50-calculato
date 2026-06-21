@@ -40,3 +40,6 @@ Building digital tools for the life sciences.
 ---
 
 📄 **Powered By Pourdad Panahi**
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
