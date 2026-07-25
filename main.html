@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ماشین‌حساب TCID₅₀ به روش Kärber</title>
     <style>
-        /* ─── Reset & base ─── */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -19,13 +18,12 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 900px;
+            max-width: 950px;
             width: 100%;
             background: #ffffff;
             border-radius: 20px;
             box-shadow: 0 8px 40px rgba(0,20,10,0.10);
             padding: 28px 32px 32px;
-            transition: 0.2s;
         }
         h1 {
             font-size: 1.9rem;
@@ -34,8 +32,8 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 4px;
             flex-wrap: wrap;
+            margin-bottom: 4px;
         }
         h1 small {
             font-size: 0.9rem;
@@ -215,7 +213,6 @@
             background: #1d3f53;
         }
 
-        /* نتایج */
         #results {
             display: none;
             margin-top: 8px;
@@ -227,7 +224,7 @@
             padding: 18px 22px 22px;
             margin-top: 4px;
         }
-        .result-card .meta {
+        .meta {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 4px 18px;
@@ -238,7 +235,7 @@
             border-radius: 10px;
             margin-bottom: 14px;
         }
-        .result-card .meta span {
+        .meta span {
             font-weight: 500;
         }
         .result-line {
@@ -253,26 +250,17 @@
             font-size: 1.5rem;
             font-weight: 600;
             color: #0f3d2c;
-            letter-spacing: -0.2px;
         }
         .titer-value {
             font-size: 2.2rem;
             font-weight: 700;
             color: #b13e2e;
-            letter-spacing: -0.5px;
             line-height: 1.2;
         }
         .titer-value small {
             font-size: 1rem;
             font-weight: 400;
             color: #4f6b5e;
-        }
-        .result-dilution {
-            background: #e1efe8;
-            padding: 4px 12px;
-            border-radius: 30px;
-            display: inline-block;
-            font-weight: 500;
         }
         .note-box {
             background: #e5f2ec;
@@ -291,9 +279,7 @@
             font-size: 0.85rem;
             border-top: 1px solid #e2e9e5;
             padding-top: 18px;
-            letter-spacing: 0.2px;
         }
-
         @media (max-width: 600px) {
             .container { padding: 16px; }
             h1 { font-size: 1.5rem; }
@@ -303,7 +289,6 @@
             .btn { padding: 8px 16px; font-size: 0.85rem; }
             .titer-value { font-size: 1.7rem; }
         }
-
         @media print {
             body { background: #fff; padding: 0.2in; }
             .container { box-shadow: none; padding: 0; border-radius: 0; }
@@ -316,7 +301,6 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>
         🧬 ماشین‌حساب TCID₅₀
@@ -326,7 +310,6 @@
         محاسبه‌ی تیتر ویروس از داده‌های رقت‌سازی محدود (endpoint dilution)
     </div>
 
-    <!-- پارامترها -->
     <div class="card">
         <div class="card-title">
             ⚙️ تنظیمات آزمایش
@@ -361,7 +344,6 @@
         </div>
     </div>
 
-    <!-- جدول داده‌ها -->
     <div class="card">
         <div class="card-title">
             📊 تعداد چاهک‌های مثبت در هر رقت
@@ -380,34 +362,28 @@
         </div>
     </div>
 
-    <!-- دکمه‌ها -->
     <div class="actions">
         <button class="btn btn-primary" onclick="calculate()">▶ محاسبه</button>
         <button class="btn btn-print" onclick="printReport()">🖨️ چاپ / PDF</button>
         <button class="btn btn-danger-outline" onclick="clearAll()">✕ پاک کردن</button>
     </div>
 
-    <!-- نتایج -->
     <div id="results">
         <div class="result-card" id="resultText"></div>
     </div>
 
     <div class="footer">
-        طراحی شده توسط Pourdad Panahi &nbsp;·&nbsp; ویرایش ۳
+        طراحی شده توسط Pourdad Panahi &nbsp;·&nbsp; ویرایش نهایی
     </div>
 </div>
 
 <script>
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  مقداردهی اولیه
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ─── مقداردهی اولیه ───
     document.addEventListener('DOMContentLoaded', () => {
         updateTable();
     });
 
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  به‌روزرسانی جدول
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ─── به‌روزرسانی جدول ───
     function updateTable() {
         const numDil = parseInt(document.getElementById('numDil').value) || 0;
         const firstLog = parseFloat(document.getElementById('firstLog').value) || 0;
@@ -415,7 +391,6 @@
         const logStep = Math.log10(dilFactor);
         const tbody = document.getElementById('tableBody');
 
-        // حفظ مقادیر قبلی در صورت هم‌تعداد بودن
         const existingInputs = tbody.querySelectorAll('input[type="number"]');
         const oldValues = [];
         for (let inp of existingInputs) {
@@ -425,13 +400,7 @@
         tbody.innerHTML = '';
         for (let i = 0; i < numDil; i++) {
             const exponent = firstLog - i * logStep;
-            let dilStr;
-            if (exponent < 0) {
-                dilStr = `10<sup>${exponent.toFixed(3)}</sup>`;
-            } else {
-                const denom = Math.pow(10, exponent);
-                dilStr = `1 / ${denom.toFixed(3)}`;
-            }
+            let dilStr = exponent < 0 ? `10<sup>${exponent.toFixed(3)}</sup>` : `1 / ${Math.pow(10, exponent).toFixed(3)}`;
             const row = tbody.insertRow();
             const cell1 = row.insertCell(0);
             const cell2 = row.insertCell(1);
@@ -448,9 +417,7 @@
         }
     }
 
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  محاسبه‌ی اصلی
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ─── محاسبه ───
     function calculate() {
         const wells = parseInt(document.getElementById('wells').value);
         const dilFactor = parseFloat(document.getElementById('dilFactor').value);
@@ -458,7 +425,6 @@
         const numDil = parseInt(document.getElementById('numDil').value);
         const inocVol = parseFloat(document.getElementById('inocVol').value);
 
-        // اعتبارسنجی
         if (!wells || wells < 1) { alert('تعداد چاهک باید حداقل ۱ باشد.'); return; }
         if (!dilFactor || dilFactor <= 1) { alert('فاکتور رقت باید بزرگتر از ۱ باشد.'); return; }
         if (isNaN(firstLog)) { alert('لگاریتم اولین رقت را به‌درستی وارد کنید.'); return; }
@@ -481,16 +447,16 @@
             positives.push(val);
         }
 
-        // ── روش Kärber ──
+        // ── Kärber ──
         const proportions = positives.map(p => p / wells);
         const S = proportions.reduce((a, b) => a + b, 0);
         const logStep = Math.log10(dilFactor);
         const log10TCID50 = firstLog - logStep * (S - 0.5);
         const tcid50Dil = Math.pow(10, log10TCID50);
         const titer = Math.pow(10, -log10TCID50) / inocVol;   // TCID50/mL
-        const log10Titer = Math.log10(titer);                // لگاریتم تیتر نهایی
+        const log10Titer = Math.log10(titer);
 
-        // ── ساخت خروجی ──
+        // ── خروجی ──
         const now = new Date().toLocaleString('fa-IR', { hour12: false });
         let html = `
             <div style="display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
@@ -514,6 +480,7 @@
             <div class="result-line" style="margin-top:6px;">
                 <span class="label">log₁₀(TCID₅₀) مربوط به رقت معکوس =</span>
                 <span class="log-value">${log10TCID50.toFixed(4)}</span>
+                <span style="font-size:0.9rem;color:#4a6b5c;margin-left:8px;">(بر اساس رقت، بدون در نظر گرفتن حجم)</span>
             </div>
 
             <div style="background:#f0f7f3;padding:12px 16px;border-radius:10px;margin:12px 0;border-left:4px solid #2d6a4f;">
@@ -522,7 +489,7 @@
                     <span style="color:#3a5f4e;">تیتر بر اساس حجم تلقیح (${inocVol} mL):</span>
                     <span><strong>${(titer * inocVol).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</strong> TCID₅₀ / ${inocVol} mL</span>
 
-                    <span style="color:#3a5f4e;">تیتر نهایی (per mL):</span>
+                    <span style="color:#3a5f4e;">تیتر نهایی (بر حسب ۱ میلی‌لیتر):</span>
                     <span><span class="titer-value" style="font-size:1.6rem;">${titer.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span> TCID₅₀ / mL</span>
 
                     <span style="color:#3a5f4e;">لگاریتم تیتر نهایی (log₁₀):</span>
@@ -533,6 +500,9 @@
             <div class="note-box">
                 ℹ️ <strong>نکته:</strong> لگاریتم تیتر نهایی (${log10Titer.toFixed(4)}) دقیقاً <strong>${(log10Titer - log10TCID50).toFixed(4)}</strong> واحد بیشتر از log₁₀(TCID₅₀) (${log10TCID50.toFixed(4)}) است، زیرا تیتر بر حسب میلی‌لیتر با تقسیم بر ${inocVol} mL (یعنی ضرب در ${(1/inocVol).toFixed(1)}) محاسبه شده است.
             </div>
+            <div style="margin-top:8px;font-size:0.9rem;color:#2d5a47;background:#eaf3ef;padding:6px 14px;border-radius:30px;display:inline-block;">
+                📌 واحد گزارش: <strong>TCID₅₀ / mL</strong> (استاندارد جهانی)
+            </div>
         `;
 
         document.getElementById('resultText').innerHTML = html;
@@ -542,15 +512,13 @@
         window._lastResults = {
             wells, dilFactor, firstLog, numDil, inocVol,
             positives, proportions, S, log10TCID50, tcid50Dil, titer, log10Titer,
-            now, html // خود html را هم ذخیره می‌کنیم تا پرینت دقیقاً همان را نمایش دهد
+            now, html
         };
 
         document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  پاک کردن
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ─── پاک کردن ───
     function clearAll() {
         document.getElementById('wells').value = 5;
         document.getElementById('dilFactor').value = 10;
@@ -563,9 +531,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    //  پرینت گزارش
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // ─── پرینت ───
     function printReport() {
         const d = window._lastResults;
         if (!d) {
@@ -573,7 +539,6 @@
             return;
         }
 
-        // از محتوای ذخیره شده استفاده می‌کنیم (همان html که در resultText قرار گرفته)
         const resultHtml = document.getElementById('resultText').innerHTML;
 
         const printWin = window.open('', '_blank', 'width=900,height=700');
@@ -589,76 +554,23 @@
                 <meta charset="UTF-8">
                 <title>گزارش TCID₅₀</title>
                 <style>
-                    body {
-                        font-family: 'Segoe UI', Arial, sans-serif;
-                        max-width: 750px;
-                        margin: 30px auto;
-                        padding: 0 20px;
-                        color: #1a2e25;
-                        background: #fff;
-                    }
-                    h1 {
-                        color: #1f4d3b;
-                        border-bottom: 3px solid #bdd8cc;
-                        padding-bottom: 6px;
-                    }
-                    .meta-grid {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
-                        gap: 4px 16px;
-                        background: #f2f8f5;
-                        padding: 12px 16px;
-                        border-radius: 8px;
-                        margin: 12px 0;
-                    }
-                    .titer-value {
-                        font-size: 2.2rem;
-                        font-weight: 700;
-                        color: #b13e2e;
-                    }
-                    .titer-value small {
-                        font-size: 1rem;
-                        font-weight: 400;
-                        color: #3f5f4e;
-                    }
-                    .log-value {
-                        font-size: 1.3rem;
-                        font-weight: 600;
-                        color: #0f3d2c;
-                    }
-                    .note-box {
-                        background: #e5f2ec;
-                        padding: 8px 16px;
-                        border-radius: 30px;
-                        display: inline-block;
-                        margin-top: 6px;
-                        font-size: 0.9rem;
-                        color: #2d5a47;
-                    }
-                    .footer {
-                        margin-top: 32px;
-                        color: #7b9a8a;
-                        font-style: italic;
-                        border-top: 1px solid #d8e5dd;
-                        padding-top: 14px;
-                        text-align: center;
-                    }
+                    body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 750px; margin: 30px auto; padding: 0 20px; color: #1a2e25; background: #fff; }
+                    h1 { color: #1f4d3b; border-bottom: 3px solid #bdd8cc; padding-bottom: 6px; }
+                    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 4px 16px; background: #f2f8f5; padding: 12px 16px; border-radius: 8px; margin: 12px 0; }
+                    .titer-value { font-size: 2.2rem; font-weight: 700; color: #b13e2e; }
+                    .titer-value small { font-size: 1rem; font-weight: 400; color: #3f5f4e; }
+                    .log-value { font-size: 1.3rem; font-weight: 600; color: #0f3d2c; }
+                    .note-box { background: #e5f2ec; padding: 8px 16px; border-radius: 30px; display: inline-block; margin-top: 6px; font-size: 0.9rem; color: #2d5a47; }
+                    .footer { margin-top: 32px; color: #7b9a8a; font-style: italic; border-top: 1px solid #d8e5dd; padding-top: 14px; text-align: center; }
                     .no-print { display: none; }
-                    @media print {
-                        .no-print { display: none; }
-                    }
+                    @media print { .no-print { display: none; } }
                 </style>
             </head>
             <body>
                 <h1>🧬 گزارش تیتر TCID₅₀ (روش Kärber)</h1>
-                <div style="color:#3b5f4e; margin-bottom: 10px;">
-                    <strong>تاریخ:</strong> ${d.now}
-                </div>
-                <!-- کپی از محتوای نتایج (با همان استایل) -->
+                <div style="color:#3b5f4e; margin-bottom: 10px;"><strong>تاریخ:</strong> ${d.now}</div>
                 ${resultHtml}
-                <div class="footer">
-                    طراحی شده توسط Pourdad Panahi &nbsp;·&nbsp; ویرایش ۳
-                </div>
+                <div class="footer">طراحی شده توسط Pourdad Panahi &nbsp;·&nbsp; ویرایش نهایی</div>
                 <p class="no-print" style="margin-top:20px;color:#888;font-size:0.8rem;text-align:center;">
                     <button onclick="window.print()" style="padding:8px 24px;border:none;background:#1f4d3b;color:#fff;border-radius:40px;font-weight:600;cursor:pointer;">🖨️ چاپ</button>
                     &nbsp; <button onclick="window.close()" style="padding:8px 24px;border:1px solid #ccc;background:#fff;border-radius:40px;cursor:pointer;">بستن</button>
@@ -669,6 +581,5 @@
         printWin.document.close();
     }
 </script>
-
 </body>
 </html>
