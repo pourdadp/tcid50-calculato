@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TCID50 Calculator Professional v2.1</title>
+    <title>TCID50 Calculator Professional v2.2</title>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -308,11 +308,12 @@
         /* Plate Layout Grid */
         .plate-grid {
             display: grid;
-            grid-template-columns: 40px repeat(12, 1fr);
             gap: 6px;
             margin-top: 15px;
             text-align: center;
             font-size: 12px;
+            overflow-x: auto;
+            padding-bottom: 10px;
         }
         .plate-cell {
             background: var(--bg-color);
@@ -322,6 +323,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
+            min-width: 45px;
         }
         .plate-cell.positive { background-color: #d1e7dd; color: #0f5132; border-color: #badbcc; }
         .plate-cell.negative { background-color: #f8d7da; color: #842029; border-color: #f5c2c7; }
@@ -385,7 +387,7 @@
         <div class="header-meta">
             <div class="meta-pill" id="headerProjName">Project: Untitled Assay</div>
             <div class="meta-pill" id="headerSampleId">Sample: SMP-001</div>
-            <div class="meta-pill">v2.1.0</div>
+            <div class="meta-pill">v2.2.0</div>
             <button class="tool-btn" id="themeToggleBtn" title="Toggle Theme">🌓 Theme</button>
         </div>
     </header>
@@ -483,9 +485,9 @@
 
         <!-- 3. Plate Layout Panel -->
         <section class="workspace-panel" id="panel-plate">
-            <div class="panel-title">🧫 Interactive 96-Well Plate Layout Simulator</div>
+            <div class="panel-title">🧫 Interactive Assay Plate Layout Simulator</div>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-                Click individual wells to toggle positive/negative infection status. Layout synchronizes automatically with calculation tiers.
+                Click individual wells to toggle positive/negative infection status. The layout adapts dynamically to your dilution and well parameters.
             </p>
             <div id="plateVisualContainer" class="plate-grid"></div>
         </section>
@@ -503,19 +505,19 @@
                 </div>
                 <div class="form-group">
                     <label for="wellsPerDilution">Wells per Dilution</label>
-                    <input type="number" id="wellsPerDilution" value="8" min="1" max="96">
+                    <input type="number" id="wellsPerDilution" value="8" min="1" max="12">
                 </div>
                 <div class="form-group">
                     <label for="dilutionFactor">Dilution Factor</label>
                     <input type="number" id="dilutionFactor" value="10" min="2" step="any">
                 </div>
                 <div class="form-group">
-                    <label for="startingDilutionExp">Starting Dilution Power ($10^{-x}$)</label>
+                    <label for="startingDilutionExp">Starting Dilution Power (10^-x)</label>
                     <input type="number" id="startingDilutionExp" value="1" min="1" step="1">
                 </div>
                 <div class="form-group">
                     <label for="numDilutions">Number of Dilutions</label>
-                    <input type="number" id="numDilutions" value="8" min="2" max="20">
+                    <input type="number" id="numDilutions" value="8" min="2" max="12">
                 </div>
                 <div class="form-group">
                     <label for="inoculumVolume">Inoculum Volume (mL)</label>
@@ -630,7 +632,7 @@
         <h3 style="color:var(--primary-blue); margin-bottom:12px;">❓ Help & Workflow Guide</h3>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">1. Enter assay metadata in the Experiment tab.</p>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">2. Configure dilution tiers and wells per dilution in Calculation.</p>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">3. Input positive wells or use the 96-well Plate Layout grid.</p>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">3. Input positive wells or use the interactive Plate Layout grid.</p>
         <button class="btn" id="closeHelpModal">Close</button>
     </div>
 </div>
@@ -638,7 +640,7 @@
 <!-- About Modal -->
 <div class="modal-overlay" id="aboutModal">
     <div class="modal-card">
-        <h3 style="color:var(--primary-blue); margin-bottom:12px;">ℹ️ About TCID50 Calculator Professional v2.1</h3>
+        <h3 style="color:var(--primary-blue); margin-bottom:12px;">ℹ️ About TCID50 Calculator Professional v2.2</h3>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">Professional single-file laboratory suite for endpoint dilution assays.</p>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;"><strong>Powered by Pourdad Panahi</strong></p>
         <button class="btn" id="closeAboutModal">Close</button>
@@ -648,7 +650,7 @@
 <!-- Printable Professional Report Template -->
 <div class="print-report">
     <h2>OFFICIAL LABORATORY ASSAY REPORT</h2>
-    <p>Generated by TCID50 Calculator Professional v2.1 — Powered by Pourdad Panahi</p>
+    <p>Generated by TCID50 Calculator Professional v2.2 — Powered by Pourdad Panahi</p>
     <hr style="margin: 15px 0;">
     <p><strong>Experiment:</strong> <span id="pRepExp">--</span></p>
     <p><strong>Sample ID:</strong> <span id="pRepSample">--</span></p>
@@ -892,32 +894,75 @@
         function buildPlateLayout() {
             const container = document.getElementById('plateVisualContainer');
             container.innerHTML = '';
+
+            const numD = parseInt(numDilutions.value) || 8;
+            const wells = parseInt(wellsPerDilution.value) || 8;
+            const startExp = parseInt(startingDilutionExp.value) || 1;
+
+            container.style.gridTemplateColumns = `40px repeat(${numD}, minmax(45px, 1fr))`;
+
+            // Column Headers
             container.appendChild(document.createElement('div'));
-            for (let c = 1; c <= 12; c++) {
+            for (let c = 0; c < numD; c++) {
                 const hd = document.createElement('div');
                 hd.className = 'plate-header';
-                hd.textContent = c;
+                hd.textContent = `10⁻${startExp + c}`;
                 container.appendChild(hd);
             }
 
-            const rowsLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-            rowsLetters.forEach((rLetter) => {
+            const rows = dilutionTableBody.querySelectorAll('tr');
+            const rowsLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+            
+            for (let r = 0; r < wells; r++) {
+                const rLetter = rowsLetters[r] || `R${r+1}`;
                 const rHead = document.createElement('div');
                 rHead.className = 'plate-header';
                 rHead.textContent = rLetter;
                 container.appendChild(rHead);
 
-                for (let c = 1; c <= 12; c++) {
+                for (let c = 0; c < numD; c++) {
                     const cell = document.createElement('div');
-                    cell.className = 'plate-cell positive';
-                    cell.textContent = `${rLetter}${c}`;
+                    
+                    let currentPosCount = 0;
+                    if (rows[c]) {
+                        currentPosCount = parseInt(rows[c].querySelector('.pos-input').value) || 0;
+                    }
+                    
+                    const isPos = r < currentPosCount;
+                    cell.className = `plate-cell ${isPos ? 'positive' : 'negative'}`;
+                    cell.textContent = `${rLetter}${c+1}`;
+
                     cell.addEventListener('click', () => {
                         cell.classList.toggle('positive');
                         cell.classList.toggle('negative');
+                        updateTableFromPlate(c, numD, wells);
                     });
+                    cell.setAttribute('data-col', c);
+                    cell.setAttribute('data-row', r);
                     container.appendChild(cell);
                 }
-            });
+            }
+        }
+
+        function updateTableFromPlate(colIndex, numD, wells) {
+            const container = document.getElementById('plateVisualContainer');
+            let positiveCount = 0;
+            
+            for (let r = 0; r < wells; r++) {
+                const cell = container.querySelector(`div[data-col="${colIndex}"][data-row="${r}"]`);
+                if (cell && cell.classList.contains('positive')) {
+                    positiveCount++;
+                }
+            }
+
+            const rows = dilutionTableBody.querySelectorAll('tr');
+            if (rows[colIndex]) {
+                const posInput = rows[colIndex].querySelector('.pos-input');
+                if (posInput) {
+                    posInput.value = positiveCount;
+                    posInput.dispatchEvent(new Event('input'));
+                }
+            }
         }
 
         function saveState() {
@@ -929,11 +974,11 @@
                 numDilutions: numDilutions.value, inoculumVolume: inoculumVolume.value,
                 posWells: Array.from(dilutionTableBody.querySelectorAll('.pos-input')).map(i => i.value)
             };
-            localStorage.setItem('tcid50_v21_state', JSON.stringify(state));
+            localStorage.setItem('tcid50_v22_state', JSON.stringify(state));
         }
 
         function loadState() {
-            const saved = localStorage.getItem('tcid50_v21_state');
+            const saved = localStorage.getItem('tcid50_v22_state');
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
@@ -959,7 +1004,7 @@
 
         document.getElementById('tbNew').addEventListener('click', () => {
             if (confirm('Start a new assay project? Unsaved changes will be reset.')) {
-                localStorage.removeItem('tcid50_v21_state');
+                localStorage.removeItem('tcid50_v22_state');
                 location.reload();
             }
         });
@@ -970,12 +1015,12 @@
         });
 
         document.getElementById('tbSaveAs').addEventListener('click', () => {
-            const state = localStorage.getItem('tcid50_v21_state');
+            const state = localStorage.getItem('tcid50_v22_state');
             const blob = new Blob([state], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${sampleId.value || 'TCID50_Project'}_v2.1.json`;
+            a.download = `${sampleId.value || 'TCID50_Project'}_v2.2.json`;
             a.click();
         });
 
@@ -988,7 +1033,7 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (evt) => {
-                localStorage.setItem('tcid50_v21_state', evt.target.result);
+                localStorage.setItem('tcid50_v22_state', evt.target.result);
                 loadState();
             };
             reader.readAsText(file);
