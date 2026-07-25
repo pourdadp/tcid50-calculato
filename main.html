@@ -240,16 +240,28 @@
         }
         .result-line {
             font-size: 1.05rem;
-            padding: 4px 0;
+            padding: 6px 0;
+            border-bottom: 1px dashed #dce8e1;
+        }
+        .result-line:last-of-type {
+            border-bottom: none;
         }
         .result-line .label {
-            font-weight: 500;
+            font-weight: 600;
             color: #1f4d3b;
+            background: #eaf3ef;
+            padding: 2px 10px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-left: 4px;
         }
         .log-value {
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
             color: #0f3d2c;
+            background: #fff;
+            padding: 0 10px;
+            border-radius: 8px;
         }
         .titer-value {
             font-size: 2.2rem;
@@ -267,7 +279,7 @@
             padding: 10px 16px;
             border-radius: 30px;
             display: inline-block;
-            margin-top: 6px;
+            margin-top: 10px;
             font-size: 0.9rem;
             color: #2d5a47;
             max-width: 100%;
@@ -280,6 +292,16 @@
             border-top: 1px solid #e2e9e5;
             padding-top: 18px;
         }
+        .unit-badge {
+            display: inline-block;
+            background: #2d6a4f;
+            color: #fff;
+            font-size: 0.75rem;
+            padding: 0 12px;
+            border-radius: 30px;
+            line-height: 1.8;
+            margin-right: 6px;
+        }
         @media (max-width: 600px) {
             .container { padding: 16px; }
             h1 { font-size: 1.5rem; }
@@ -288,6 +310,7 @@
             td input[type="number"] { width: 56px; }
             .btn { padding: 8px 16px; font-size: 0.85rem; }
             .titer-value { font-size: 1.7rem; }
+            .log-value { font-size: 1.2rem; }
         }
         @media print {
             body { background: #fff; padding: 0.2in; }
@@ -456,7 +479,7 @@
         const titer = Math.pow(10, -log10TCID50) / inocVol;   // TCID50/mL
         const log10Titer = Math.log10(titer);
 
-        // ── خروجی ──
+        // ── خروجی با برچسب‌های کاملاً شفاف ──
         const now = new Date().toLocaleString('fa-IR', { hour12: false });
         let html = `
             <div style="display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
@@ -475,33 +498,45 @@
                 ${positives.map((v,i) => `<span style="background:#e3efe9;padding:2px 10px;border-radius:30px;margin:0 4px;font-size:0.9rem;">${v}/${wells}</span>`).join(' ')}
             </div>
             <hr style="border:none;border-top:1px solid #cde0d7;margin:12px 0;" />
-            <div class="result-line"><span class="label">Σp (مجموع نسبت‌ها) =</span> ${S.toFixed(4)}</div>
-
-            <div class="result-line" style="margin-top:6px;">
-                <span class="label">log₁₀(TCID₅₀) مربوط به رقت معکوس =</span>
-                <span class="log-value">${log10TCID50.toFixed(4)}</span>
-                <span style="font-size:0.9rem;color:#4a6b5c;margin-left:8px;">(بر اساس رقت، بدون در نظر گرفتن حجم)</span>
+            
+            <div class="result-line">
+                <span class="label">Σp (مجموع نسبت‌ها)</span> = ${S.toFixed(4)}
             </div>
 
+            <!-- خط اول لگاریتم با برچسب "بر مبنای رقت" -->
+            <div class="result-line" style="background:#f8fbfa;border-radius:8px;padding:8px 12px;margin:6px 0;">
+                <span style="font-weight:700;color:#1a3e32;">📌 log₁₀(TCID₅₀) <span style="background:#d4e3db;padding:0 10px;border-radius:30px;font-size:0.85rem;">بر مبنای رقت معکوس (بدون تبدیل حجم)</span></span>
+                <br>
+                <span class="log-value">${log10TCID50.toFixed(4)}</span>
+                <span style="font-size:0.9rem;color:#4a6b5c;margin-left:8px;">(این عدد فقط نشان‌دهنده‌ی رقت است، نه تیتر نهایی)</span>
+            </div>
+
+            <!-- نمایش تیتر بر اساس حجم تلقیح -->
             <div style="background:#f0f7f3;padding:12px 16px;border-radius:10px;margin:12px 0;border-left:4px solid #2d6a4f;">
-                <div style="font-weight:600;color:#1a3e32;margin-bottom:6px;">🔹 تبدیل به تیتر استاندارد (بر حسب میلی‌لیتر)</div>
-                <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:0.95rem;">
+                <div style="font-weight:600;color:#1a3e32;margin-bottom:8px;">🔹 تبدیل به تیتر</div>
+                
+                <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:0.95rem;">
                     <span style="color:#3a5f4e;">تیتر بر اساس حجم تلقیح (${inocVol} mL):</span>
                     <span><strong>${(titer * inocVol).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</strong> TCID₅₀ / ${inocVol} mL</span>
 
-                    <span style="color:#3a5f4e;">تیتر نهایی (بر حسب ۱ میلی‌لیتر):</span>
+                    <span style="color:#3a5f4e;font-weight:600;">تیتر نهایی (بر مبنای ۱ میلی‌لیتر):</span>
                     <span><span class="titer-value" style="font-size:1.6rem;">${titer.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</span> TCID₅₀ / mL</span>
-
-                    <span style="color:#3a5f4e;">لگاریتم تیتر نهایی (log₁₀):</span>
-                    <span><strong>${log10Titer.toFixed(4)}</strong> &nbsp;(یعنی ۱۰<sup>${log10Titer.toFixed(4)}</sup>)</span>
                 </div>
             </div>
 
+            <!-- خط دوم لگاریتم با برچسب "بر مبنای میلی‌لیتر" -->
+            <div class="result-line" style="background:#eaf3ef;border-radius:8px;padding:8px 12px;margin:8px 0;border:1px solid #bdd8cc;">
+                <span style="font-weight:700;color:#1a3e32;">📌 log₁₀(تیتر نهایی) <span style="background:#c0392b;color:#fff;padding:0 10px;border-radius:30px;font-size:0.85rem;">بر مبنای ۱ میلی‌لیتر (استاندارد)</span></span>
+                <br>
+                <span class="log-value" style="color:#b13e2e;">${log10Titer.toFixed(4)}</span>
+                <span style="font-size:0.9rem;color:#4a6b5c;margin-left:8px;">(یعنی ۱۰<sup>${log10Titer.toFixed(4)}</sup> واحد در هر میلی‌لیتر)</span>
+            </div>
+
             <div class="note-box">
-                ℹ️ <strong>نکته:</strong> لگاریتم تیتر نهایی (${log10Titer.toFixed(4)}) دقیقاً <strong>${(log10Titer - log10TCID50).toFixed(4)}</strong> واحد بیشتر از log₁₀(TCID₅₀) (${log10TCID50.toFixed(4)}) است، زیرا تیتر بر حسب میلی‌لیتر با تقسیم بر ${inocVol} mL (یعنی ضرب در ${(1/inocVol).toFixed(1)}) محاسبه شده است.
+                ℹ️ <strong>نکته:</strong> لگاریتم تیتر نهایی (${log10Titer.toFixed(4)}) دقیقاً <strong>${(log10Titer - log10TCID50).toFixed(4)}</strong> واحد بیشتر از log₁₀(TCID₅₀) (${log10TCID50.toFixed(4)}) است، زیرا برای تبدیل به میلی‌لیتر، بر ${inocVol} mL تقسیم شده‌ایم (یعنی ضرب در ${(1/inocVol).toFixed(1)}).
             </div>
             <div style="margin-top:8px;font-size:0.9rem;color:#2d5a47;background:#eaf3ef;padding:6px 14px;border-radius:30px;display:inline-block;">
-                📌 واحد گزارش: <strong>TCID₅₀ / mL</strong> (استاندارد جهانی)
+                📌 واحد استاندارد گزارش: <strong>TCID₅₀ / mL</strong>
             </div>
         `;
 
@@ -563,6 +598,8 @@
                     .note-box { background: #e5f2ec; padding: 8px 16px; border-radius: 30px; display: inline-block; margin-top: 6px; font-size: 0.9rem; color: #2d5a47; }
                     .footer { margin-top: 32px; color: #7b9a8a; font-style: italic; border-top: 1px solid #d8e5dd; padding-top: 14px; text-align: center; }
                     .no-print { display: none; }
+                    .result-line { padding: 6px 0; }
+                    .label { font-weight: 600; background: #eaf3ef; padding: 2px 10px; border-radius: 30px; }
                     @media print { .no-print { display: none; } }
                 </style>
             </head>
