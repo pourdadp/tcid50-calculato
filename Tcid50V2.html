@@ -1,1084 +1,323 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TCID50 Calculator Professional v2.2</title>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>سامانه تخصصی محاسبات و گزارش‌ساز TCID50</title>
     <style>
         :root {
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --primary-blue: #0f2537;
-            --dark-green: #1b4332;
-            --accent-green: #2d6a4f;
-            --light-green: #d8f3dc;
-            --text-color: #212529;
-            --text-muted: #6c757d;
-            --border-color: #dcedc8;
-            --border-light: #e9ecef;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --radius: 12px;
-            --transition: all 0.2s ease;
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --success: #166534;
+            --success-bg: #dcfce7;
+            --danger: #991b1b;
+            --danger-bg: #fee2e2;
+            --bg-main: #f8fafc;
+            --text-main: #1e293b;
+            --border: #cbd5e1;
         }
 
-        [data-theme="dark"] {
-            --bg-color: #121824;
-            --card-bg: #1a2332;
-            --primary-blue: #64b5f6;
-            --dark-green: #81c784;
-            --accent-green: #4caf50;
-            --light-green: #1e3a2f;
-            --text-color: #e0e0e0;
-            --text-muted: #a0aab2;
-            --border-color: #2c3e50;
-            --border-light: #2c3e50;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-        }
-
-        * {
+        *, *::before, *::after {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.5;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Tahoma', 'Vazirmatn', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+            line-height: 1.6;
         }
 
-        .app-container {
-            max-width: 1400px;
+        .container {
+            max-width: 1100px;
             margin: 0 auto;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            flex: 1;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            padding: 30px;
         }
 
-        /* Header */
-        header.app-header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--dark-green));
-            color: #ffffff;
-            padding: 18px 25px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            font-size: 28px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 8px 12px;
-            border-radius: 10px;
-        }
-
-        .header-title h1 {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .header-title p {
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        .header-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .meta-pill {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Toolbar */
-        .app-toolbar {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius);
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            box-shadow: var(--shadow);
-        }
-
-        .toolbar-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .tool-btn {
-            background: transparent;
-            border: 1px solid var(--border-light);
-            color: var(--text-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: var(--transition);
-        }
-
-        .tool-btn:hover {
-            background-color: var(--light-green);
-            border-color: var(--accent-green);
-            color: var(--accent-green);
-        }
-
-        /* Navigation Tabs */
-        .app-nav {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .nav-tab {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-light);
-            color: var(--text-muted);
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: var(--transition);
-        }
-
-        .nav-tab:hover {
-            color: var(--text-color);
-            border-color: var(--accent-green);
-        }
-
-        .nav-tab.active {
-            background-color: var(--dark-green);
-            color: #ffffff;
-            border-color: var(--dark-green);
-            box-shadow: var(--shadow);
-        }
-
-        /* Workspace Panels */
-        .workspace-panel {
-            display: none;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.25s ease-in-out;
-        }
-
-        .workspace-panel.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .panel-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary-blue);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid var(--light-green);
+        h1 {
+            font-size: 20pt;
+            color: #0f172a;
+            border-bottom: 3px solid var(--primary);
             padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 25px;
         }
 
-        /* Grid Layouts */
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        h2 {
+            font-size: 14pt;
+            color: var(--primary-dark);
+            border-right: 4px solid var(--primary);
+            padding-right: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
 
-        /* Form Controls */
+        .card {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
         .form-group {
             margin-bottom: 15px;
         }
 
         label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
+            font-weight: bold;
+            font-size: 9.5pt;
+            color: #475569;
             margin-bottom: 6px;
         }
 
-        input, select, textarea {
+        input, select {
             width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            color: var(--text-color);
-            background-color: var(--card-bg);
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-green);
-            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
-        }
-
-        textarea { resize: vertical; min-height: 90px; }
-
-        /* Buttons */
-        .btn {
-            background-color: var(--dark-green);
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn:hover { background-color: var(--accent-green); }
-        .btn-secondary { background-color: var(--primary-blue); }
-        .btn-secondary:hover { opacity: 0.9; }
-
-        /* Tables */
-        .table-responsive { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid var(--border-light); }
-        th { background-color: var(--bg-color); color: var(--primary-blue); font-weight: 600; }
-        tr:hover { background-color: rgba(216, 243, 220, 0.1); }
-        input.table-input { width: 85px; padding: 6px 10px; text-align: center; font-weight: 600; }
-
-        /* Metric Dashboard Cards */
-        .metric-card {
-            background: linear-gradient(135deg, var(--bg-color), var(--light-green));
-            border-radius: 10px;
-            padding: 20px;
-            border-left: 5px solid var(--dark-green);
-        }
-        .metric-label { font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; }
-        .metric-value { font-size: 22px; font-weight: 700; color: var(--primary-blue); margin-top: 8px; word-break: break-all; }
-        .metric-sub { font-size: 13px; color: var(--dark-green); margin-top: 4px; font-weight: 600; }
-
-        /* Chart */
-        .chart-container { position: relative; height: 380px; width: 100%; margin-top: 15px; }
-
-        /* Plate Layout Grid */
-        .plate-grid {
-            display: grid;
-            gap: 6px;
-            margin-top: 15px;
-            text-align: center;
-            font-size: 12px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-        .plate-cell {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
+            padding: 10px;
+            border: 1px solid var(--border);
             border-radius: 6px;
-            padding: 8px 4px;
-            font-weight: 600;
+            font-family: inherit;
+            font-size: 10pt;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 9.5pt;
+        }
+
+        table.data-table th {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--primary-dark);
+        }
+
+        table.data-table td {
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        table.data-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 10.5pt;
+            font-weight: bold;
+            border-radius: 6px;
             cursor: pointer;
-            transition: var(--transition);
-            min-width: 45px;
-        }
-        .plate-cell.positive { background-color: #d1e7dd; color: #0f5132; border-color: #badbcc; }
-        .plate-cell.negative { background-color: #f8d7da; color: #842029; border-color: #f5c2c7; }
-        .plate-header { font-weight: bold; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
-
-        /* Status Bar */
-        footer.status-bar {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius);
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            color: var(--text-muted);
-            box-shadow: var(--shadow);
-            flex-wrap: wrap;
-            gap: 10px;
+            transition: background 0.2s;
+            display: inline-block;
+            text-align: center;
         }
 
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 600;
-        }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: #28a745; }
-
-        /* Modals */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000;
-        }
-        .modal-card {
-            background: var(--card-bg); border-radius: var(--radius); width: 90%; max-width: 600px;
-            padding: 25px; box-shadow: var(--shadow); border: 1px solid var(--border-light);
+        .btn:hover {
+            background-color: var(--primary-dark);
         }
 
-        /* Print Report */
-        .print-report { display: none; }
+        .result-box {
+            background: var(--success-bg);
+            border: 1px solid #bbf7d0;
+            color: var(--success);
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .plate-container {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .plate-grid {
+            display: inline-block;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        .plate-grid th, .plate-grid td {
+            width: 38px;
+            height: 38px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 9pt;
+            border: 1px solid var(--border);
+        }
+
+        .plate-grid th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: bold;
+        }
+
+        .well-pos {
+            background-color: var(--danger-bg);
+            color: var(--danger);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .well-neg {
+            background-color: var(--success-bg);
+            color: var(--success);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         @media print {
-            body { background: #ffffff; color: #000000; padding: 0; }
-            header.app-header, .app-toolbar, .app-nav, footer.status-bar, .workspace-panel { display: none !important; }
-            .print-report { display: block !important; }
+            body {
+                background-color: #ffffff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .no-print {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-        <div class="header-brand">
-            <div class="logo-icon">🔬</div>
-            <div class="header-title">
-                <h1>TCID50 Calculator Professional</h1>
-                <p>Advanced Endpoint Dilution Assay Suite</p>
-            </div>
-        </div>
-        <div class="header-meta">
-            <div class="meta-pill" id="headerProjName">Project: Untitled Assay</div>
-            <div class="meta-pill" id="headerSampleId">Sample: SMP-001</div>
-            <div class="meta-pill">v2.2.0</div>
-            <button class="tool-btn" id="themeToggleBtn" title="Toggle Theme">🌓 Theme</button>
-        </div>
-    </header>
+    <div class="container">
+        <h1>سامانه محاسباتی و گزارش‌ساز تیترسنجی ویروس (TCID50)</h1>
 
-    <!-- Toolbar -->
-    <div class="app-toolbar">
-        <div class="toolbar-group">
-            <button class="tool-btn" id="tbNew">📄 New</button>
-            <button class="tool-btn" id="tbOpen">📂 Open</button>
-            <button class="tool-btn" id="tbSave">💾 Save</button>
-            <button class="tool-btn" id="tbSaveAs">💾 Save As</button>
-            <input type="file" id="fileInputOpen" style="display: none;" accept=".json">
-        </div>
-        <div class="toolbar-group">
-            <button class="tool-btn" id="tbImport">📥 Import CSV</button>
-            <button class="tool-btn" id="tbExport">📤 Export CSV</button>
-            <button class="tool-btn" id="tbPrint">🖨️ Print Report</button>
-        </div>
-        <div class="toolbar-group">
-            <button class="tool-btn" id="tbHelp">❓ Help</button>
-            <button class="tool-btn" id="tbAbout">ℹ️ About</button>
-        </div>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <nav class="app-nav">
-        <button class="nav-tab active" data-tab="experiment">Experiment</button>
-        <button class="nav-tab" data-tab="samples">Samples</button>
-        <button class="nav-tab" data-tab="plate">Plate Layout</button>
-        <button class="nav-tab" data-tab="calculation">Calculation</button>
-        <button class="nav-tab" data-tab="results">Results</button>
-        <button class="nav-tab" data-tab="charts">Charts</button>
-        <button class="nav-tab" data-tab="report">Report</button>
-        <button class="nav-tab" data-tab="settings">Settings</button>
-    </nav>
-
-    <!-- Main Workspace Panels -->
-    <main>
-        <!-- 1. Experiment Panel -->
-        <section class="workspace-panel active" id="panel-experiment">
-            <div class="panel-title">📋 Experiment Metadata & Information</div>
-            <div class="grid-3">
-                <div class="form-group">
-                    <label for="expName">Experiment Name</label>
-                    <input type="text" id="expName" placeholder="e.g. Influenza Titration">
-                </div>
-                <div class="form-group">
-                    <label for="virusName">Virus Name</label>
-                    <input type="text" id="virusName" placeholder="e.g. Influenza A (H1N1)">
-                </div>
-                <div class="form-group">
-                    <label for="sampleId">Sample ID</label>
-                    <input type="text" id="sampleId" placeholder="e.g. SMP-2026-001">
-                </div>
-                <div class="form-group">
-                    <label for="cellLine">Cell Line</label>
-                    <input type="text" id="cellLine" placeholder="e.g. MDCK">
-                </div>
-                <div class="form-group">
-                    <label for="operator">Operator</label>
-                    <input type="text" id="operator" placeholder="e.g. Dr. Alex Mercer">
-                </div>
-                <div class="form-group">
-                    <label for="labName">Laboratory</label>
-                    <input type="text" id="labName" placeholder="e.g. Virology Research Unit">
-                </div>
-                <div class="form-group">
-                    <label for="expDate">Date</label>
-                    <input type="date" id="expDate">
-                </div>
-                <div class="form-group" style="grid-column: span 2;">
-                    <label for="notes">Assay Notes & Conditions</label>
-                    <textarea id="notes" placeholder="Enter incubation duration, temperature, or special media notes..."></textarea>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. Samples Panel -->
-        <section class="workspace-panel" id="panel-samples">
-            <div class="panel-title">🧪 Sample Management & Batch Tracking</div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-                Manage multiplexed assay sample IDs and traceability logs for current testing series.
-            </p>
+        <div class="card">
+            <h2>اطلاعات نمونه و تست</h2>
             <div class="grid-2">
                 <div class="form-group">
-                    <label for="batchId">Batch Number</label>
-                    <input type="text" id="batchId" placeholder="e.g. BATCH-2026-Q2">
+                    <label for="virusName">نام ویروس / نمونه:</label>
+                    <input type="text" id="virusName" value="Adenovirus / Isolate-V4">
                 </div>
                 <div class="form-group">
-                    <label for="diluentType">Diluent Medium</label>
-                    <input type="text" id="diluentType" placeholder="e.g. DMEM + 2% FBS">
+                    <label for="sampleId">شناسه آزمایش:</label>
+                    <input type="text" id="sampleId" value="TCID-2026-9012">
                 </div>
-            </div>
-        </section>
-
-        <!-- 3. Plate Layout Panel -->
-        <section class="workspace-panel" id="panel-plate">
-            <div class="panel-title">🧫 Interactive Assay Plate Layout Simulator</div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-                Click individual wells to toggle positive/negative infection status. The layout adapts dynamically to your dilution and well parameters.
-            </p>
-            <div id="plateVisualContainer" class="plate-grid"></div>
-        </section>
-
-        <!-- 4. Calculation Panel -->
-        <section class="workspace-panel" id="panel-calculation">
-            <div class="panel-title">⚙️ Calculation Settings & Dilution Response Table</div>
-            <div class="grid-4" style="margin-bottom: 20px;">
                 <div class="form-group">
-                    <label for="calcMethod">Calculation Method</label>
+                    <label for="cellLine">رده سلولی (Cell Line):</label>
+                    <input type="text" id="cellLine" value="HEK-293T">
+                </div>
+                <div class="form-group">
+                    <label for="calcMethod">روش محاسبه:</label>
                     <select id="calcMethod">
-                        <option value="spearman-karber">Spearman–Kärber</option>
-                        <option value="reed-muench">Reed–Muench</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="wellsPerDilution">Wells per Dilution</label>
-                    <input type="number" id="wellsPerDilution" value="8" min="1" max="12">
-                </div>
-                <div class="form-group">
-                    <label for="dilutionFactor">Dilution Factor</label>
-                    <input type="number" id="dilutionFactor" value="10" min="2" step="any">
-                </div>
-                <div class="form-group">
-                    <label for="startingDilutionExp">Starting Dilution Power (10^-x)</label>
-                    <input type="number" id="startingDilutionExp" value="1" min="1" step="1">
-                </div>
-                <div class="form-group">
-                    <label for="numDilutions">Number of Dilutions</label>
-                    <input type="number" id="numDilutions" value="8" min="2" max="12">
-                </div>
-                <div class="form-group">
-                    <label for="inoculumVolume">Inoculum Volume (mL)</label>
-                    <input type="number" id="inoculumVolume" value="0.1" min="0.001" step="any">
-                </div>
-            </div>
-            <div style="margin-bottom: 15px;">
-                <button class="btn" id="generateTableBtn">🔄 Generate / Reset Table</button>
-            </div>
-            <div class="table-responsive">
-                <table id="dilutionTable">
-                    <thead>
-                        <tr>
-                            <th>Dilution Tier</th>
-                            <th>Total Wells</th>
-                            <th>Positive Wells</th>
-                            <th>Negative Wells</th>
-                            <th>Positive Ratio (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dilutionTableBody"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- 5. Results Panel -->
-        <section class="workspace-panel" id="panel-results">
-            <div class="panel-title">📈 Result Dashboard & Analytics</div>
-            <div class="grid-4">
-                <div class="metric-card">
-                    <div class="metric-label">TCID50 / Inoculum</div>
-                    <div class="metric-value" id="resTCID50Inoc">--</div>
-                    <div class="metric-sub" id="resLogTCID50Inoc">Log10: --</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">TCID50 / mL</div>
-                    <div class="metric-value" id="resTCID50ML">--</div>
-                    <div class="metric-sub" id="resLogTCID50ML">Log10: --</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Assay Statistics</div>
-                    <div class="metric-value" id="resSigmaP">--</div>
-                    <div class="metric-sub" id="resMethodLabel">Method: Spearman-Kärber</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Assay Status</div>
-                    <div class="metric-value" id="resStatus" style="font-size: 18px; color: var(--dark-green);">Optimal</div>
-                    <div class="metric-sub" id="resTimestamp">Calculated: Just now</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 6. Charts Panel -->
-        <section class="workspace-panel" id="panel-charts">
-            <div class="panel-title">📊 Dose-Response Curve Analysis</div>
-            <div class="chart-container">
-                <canvas id="tcidChart"></canvas>
-            </div>
-        </section>
-
-        <!-- 7. Report Panel -->
-        <section class="workspace-panel" id="panel-report">
-            <div class="panel-title">🖨️ Laboratory Assay Report Preview</div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-                Formatted professional report ready for clinical review or direct printing.
-            </p>
-            <div style="background: var(--bg-color); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
-                <h3 style="font-size: 18px; margin-bottom: 10px;">VIROLOGY ASSAY SUMMARY</h3>
-                <p><strong>Experiment:</strong> <span id="repExpName">--</span></p>
-                <p><strong>Virus:</strong> <span id="repVirusName">--</span></p>
-                <p><strong>Sample ID:</strong> <span id="repSampleId">--</span></p>
-                <p><strong>Final Titer:</strong> <span id="repTiter">--</span></p>
-            </div>
-        </section>
-
-        <!-- 8. Settings Panel -->
-        <section class="workspace-panel" id="panel-settings">
-            <div class="panel-title">⚙️ Application Preferences</div>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label for="defaultThemePref">Default Color Theme</label>
-                    <select id="defaultThemePref">
-                        <option value="light">Light Scientific</option>
-                        <option value="dark">Dark Laboratory</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="autoSavePref">Auto-Save Data</label>
-                    <select id="autoSavePref">
-                        <option value="enabled">Enabled (localStorage)</option>
-                        <option value="disabled">Disabled</option>
+                        <option value="spearman">Spearman-Kärber</option>
+                        <option value="reed">Reed-Muench</option>
                     </select>
                 </div>
             </div>
-        </section>
-    </main>
-
-    <!-- Status Bar -->
-    <footer class="status-bar">
-        <div class="status-indicator">
-            <div class="status-dot"></div>
-            <span>System Ready & Auto-Saved</span>
         </div>
-        <div id="liveClock">00:00:00</div>
-        <div>Powered by Pourdad Panahi</div>
-    </footer>
-</div>
 
-<!-- Help Modal -->
-<div class="modal-overlay" id="helpModal">
-    <div class="modal-card">
-        <h3 style="color:var(--primary-blue); margin-bottom:12px;">❓ Help & Workflow Guide</h3>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">1. Enter assay metadata in the Experiment tab.</p>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">2. Configure dilution tiers and wells per dilution in Calculation.</p>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">3. Input positive wells or use the interactive Plate Layout grid.</p>
-        <button class="btn" id="closeHelpModal">Close</button>
+        <h2>جدول داده‌های رقت و خوانش CPE</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ردیف</th>
+                    <th>لگاریتم رقت</th>
+                    <th>تعداد کل چاهک‌ها</th>
+                    <th>چاهک‌های مثبت (CPE+)</th>
+                    <th>چاهک‌های منفی (CPE-)</th>
+                    <th>نسبت مثبت</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>10^-1</td>
+                    <td>8</td>
+                    <td><input type="number" value="8" min="0" max="8" style="width:70px; text-align:center;"></td>
+                    <td>0</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>10^-2</td>
+                    <td>8</td>
+                    <td><input type="number" value="8" min="0" max="8" style="width:70px; text-align:center;"></td>
+                    <td>0</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>10^-3</td>
+                    <td>8</td>
+                    <td><input type="number" value="7" min="0" max="8" style="width:70px; text-align:center;"></td>
+                    <td>1</td>
+                    <td>87.5%</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>10^-4</td>
+                    <td>8</td>
+                    <td><input type="number" value="5" min="0" max="8" style="width:70px; text-align:center;"></td>
+                    <td>3</td>
+                    <td>62.5%</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>10^-5</td>
+                    <td>8</td>
+                    <td><input type="number" value="2" min="0" max="8" style="width:70px; text-align:center;"></td>
+                    <td>6</td>
+                    <td>25.0%</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>10^-6</td>
+                    <td>8</td>
+                    <td><input type="number" value="0" min="0" max="8" style="width:70px; text-align:center;"></td>
+                    <td>8</td>
+                    <td>0%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin: 30px 0;" class="no-print">
+            <button class="btn" onclick="window.print()">چاپ گزارش رسمی / خروجی PDF</button>
+        </div>
+
+        <div class="result-box">
+            تیتر محاسبه شده نهایی: 10^6.5 TCID50/ml (روش Spearman-Kärber)
+        </div>
     </div>
-</div>
-
-<!-- About Modal -->
-<div class="modal-overlay" id="aboutModal">
-    <div class="modal-card">
-        <h3 style="color:var(--primary-blue); margin-bottom:12px;">ℹ️ About TCID50 Calculator Professional v2.2</h3>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">Professional single-file laboratory suite for endpoint dilution assays.</p>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;"><strong>Powered by Pourdad Panahi</strong></p>
-        <button class="btn" id="closeAboutModal">Close</button>
-    </div>
-</div>
-
-<!-- Printable Professional Report Template -->
-<div class="print-report">
-    <h2>OFFICIAL LABORATORY ASSAY REPORT</h2>
-    <p>Generated by TCID50 Calculator Professional v2.2 — Powered by Pourdad Panahi</p>
-    <hr style="margin: 15px 0;">
-    <p><strong>Experiment:</strong> <span id="pRepExp">--</span></p>
-    <p><strong>Sample ID:</strong> <span id="pRepSample">--</span></p>
-    <p><strong>TCID50 / mL:</strong> <span id="pRepTiter">--</span></p>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const liveClock = document.getElementById('liveClock');
-        const tabs = document.querySelectorAll('.nav-tab');
-        const panels = document.querySelectorAll('.workspace-panel');
-
-        const expName = document.getElementById('expName');
-        const virusName = document.getElementById('virusName');
-        const sampleId = document.getElementById('sampleId');
-        const cellLine = document.getElementById('cellLine');
-        const operator = document.getElementById('operator');
-        const labName = document.getElementById('labName');
-        const expDate = document.getElementById('expDate');
-        const notes = document.getElementById('notes');
-
-        const calcMethod = document.getElementById('calcMethod');
-        const wellsPerDilution = document.getElementById('wellsPerDilution');
-        const dilutionFactor = document.getElementById('dilutionFactor');
-        const startingDilutionExp = document.getElementById('startingDilutionExp');
-        const numDilutions = document.getElementById('numDilutions');
-        const inoculumVolume = document.getElementById('inoculumVolume');
-        const generateTableBtn = document.getElementById('generateTableBtn');
-        const dilutionTableBody = document.getElementById('dilutionTableBody');
-
-        const resTCID50Inoc = document.getElementById('resTCID50Inoc');
-        const resLogTCID50Inoc = document.getElementById('resLogTCID50Inoc');
-        const resTCID50ML = document.getElementById('resTCID50ML');
-        const resLogTCID50ML = document.getElementById('resLogTCID50ML');
-        const resSigmaP = document.getElementById('resSigmaP');
-        const resMethodLabel = document.getElementById('resMethodLabel');
-        const resStatus = document.getElementById('resStatus');
-        const resTimestamp = document.getElementById('resTimestamp');
-
-        const headerProjName = document.getElementById('headerProjName');
-        const headerSampleId = document.getElementById('headerSampleId');
-
-        const helpModal = document.getElementById('helpModal');
-        const aboutModal = document.getElementById('aboutModal');
-
-        if (!expDate.value) expDate.valueAsDate = new Date();
-
-        setInterval(() => {
-            liveClock.textContent = new Date().toLocaleTimeString();
-        }, 1000);
-
-        themeToggleBtn.addEventListener('click', () => {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-        });
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                panels.forEach(p => p.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
-            });
-        });
-
-        let tcidChart = null;
-        function initChart() {
-            const ctx = document.getElementById('tcidChart').getContext('2d');
-            tcidChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: 'Positive Response (%)',
-                            data: [],
-                            borderColor: '#1b4332',
-                            backgroundColor: 'rgba(27, 67, 50, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: '50% Threshold',
-                            data: [],
-                            borderColor: '#e63946',
-                            borderDash: [6, 6],
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { min: 0, max: 100 } }
-                }
-            });
-        }
-        initChart();
-
-        function generateTable(presetPos = null) {
-            const numD = parseInt(numDilutions.value) || 8;
-            const wells = parseInt(wellsPerDilution.value) || 8;
-            const startExp = parseInt(startingDilutionExp.value) || 1;
-
-            dilutionTableBody.innerHTML = '';
-            for (let i = 0; i < numD; i++) {
-                let curExp = startExp + i;
-                let label = `10⁻${curExp}`;
-                let posVal = presetPos && presetPos[i] !== undefined ? presetPos[i] : Math.max(0, wells - Math.floor(i * (wells / (numD - 1 || 1))));
-                let negVal = wells - posVal;
-                let pct = ((posVal / wells) * 100).toFixed(1);
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${label}</strong></td>
-                    <td><input type="number" class="total-wells" value="${wells}" readonly style="background:transparent; border:none;"></td>
-                    <td><input type="number" class="table-input pos-input" value="${posVal}" min="0" max="${wells}" data-index="${i}"></td>
-                    <td><span class="neg-wells">${negVal}</span></td>
-                    <td><span class="pct-val">${pct}%</span></td>
-                `;
-                dilutionTableBody.appendChild(tr);
-            }
-
-            attachTableListeners();
-            calculateResults();
-            buildPlateLayout();
-            saveState();
-        }
-
-        function attachTableListeners() {
-            dilutionTableBody.querySelectorAll('.pos-input').forEach(input => {
-                input.addEventListener('input', (e) => {
-                    const row = e.target.closest('tr');
-                    const total = parseInt(row.querySelector('.total-wells').value);
-                    let pos = parseInt(e.target.value) || 0;
-                    if (pos > total) pos = total;
-                    if (pos < 0) pos = 0;
-                    e.target.value = pos;
-
-                    const neg = total - pos;
-                    const pct = ((pos / total) * 100).toFixed(1);
-
-                    row.querySelector('.neg-wells').textContent = neg;
-                    row.querySelector('.pct-val').textContent = pct + '%';
-
-                    calculateResults();
-                    buildPlateLayout();
-                    saveState();
-                });
-            });
-        }
-
-        function calculateResults() {
-            const method = calcMethod.value;
-            const rows = dilutionTableBody.querySelectorAll('tr');
-            const totalWells = parseInt(wellsPerDilution.value) || 8;
-            const startExp = parseFloat(startingDilutionExp.value) || 1;
-            const factor = parseFloat(dilutionFactor.value) || 10;
-            const logFactor = Math.log10(factor);
-            const volume = parseFloat(inoculumVolume.value) || 0.1;
-
-            let data = [];
-            rows.forEach((row, idx) => {
-                const pos = parseInt(row.querySelector('.pos-input').value) || 0;
-                const neg = totalWells - pos;
-                const p = pos / totalWells;
-                data.push({ idx, pos, neg, p });
-            });
-
-            let sumP = data.reduce((acc, curr) => acc + curr.p, 0);
-            
-            // Correct logic: Stock virus titer log is positive (reciprocal of endpoint dilution exponent)
-            let logTCID50Inoc = startExp + logFactor * (sumP - 0.5);
-
-            if (method === 'reed-muench') {
-                let n = data.length;
-                let cumPos = new Array(n).fill(0);
-                let cumNeg = new Array(n).fill(0);
-                for (let i = 0; i < n; i++) {
-                    let sum = 0; for (let j = i; j < n; j++) sum += data[j].pos; cumPos[i] = sum;
-                }
-                for (let i = 0; i < n; i++) {
-                    let sum = 0; for (let j = 0; j <= i; j++) sum += data[j].neg; cumNeg[i] = sum;
-                }
-                let ratios = [];
-                for (let i = 0; i < n; i++) {
-                    let total = cumPos[i] + cumNeg[i];
-                    ratios.push({ ratio: total > 0 ? (cumPos[i] / total) * 100 : 0 });
-                }
-                let index50 = -1;
-                for (let i = 0; i < n - 1; i++) {
-                    if (ratios[i].ratio >= 50 && ratios[i+1].ratio <= 50) { index50 = i; break; }
-                }
-                if (index50 !== -1) {
-                    let above = ratios[index50].ratio;
-                    let below = ratios[index50 + 1].ratio;
-                    let propDist = (above - 50) / ((above - below) || 1);
-                    logTCID50Inoc = startExp + index50 * logFactor + propDist * logFactor;
-                }
-                resMethodLabel.textContent = 'Method: Reed-Muench';
-            } else {
-                resMethodLabel.textContent = 'Method: Spearman-Kärber';
-            }
-
-            // Adjust for 1 mL volume (since vol = 0.1 mL, concentration/mL = concentration/inoculum * (1/vol))
-            let logTCID50PerML = logTCID50Inoc - Math.log10(volume);
-            let tcid50PerML = Math.pow(10, logTCID50PerML);
-            let tcid50Inoc = Math.pow(10, logTCID50Inoc);
-
-            resTCID50Inoc.textContent = tcid50Inoc.toExponential(2);
-            resLogTCID50Inoc.textContent = `Log10: +${logTCID50Inoc.toFixed(2)}`;
-            resTCID50ML.textContent = tcid50PerML.toExponential(2);
-            resLogTCID50ML.textContent = `Log10: +${logTCID50PerML.toFixed(2)}`;
-            resSigmaP.textContent = `Σp = ${sumP.toFixed(2)}`;
-            resStatus.textContent = 'Calculated ✓';
-            resTimestamp.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
-
-            headerProjName.textContent = `Project: ${expName.value || 'Untitled Assay'}`;
-            headerSampleId.textContent = `Sample: ${sampleId.value || 'SMP-001'}`;
-            document.getElementById('repExpName').textContent = expName.value || '--';
-            document.getElementById('repVirusName').textContent = virusName.value || '--';
-            document.getElementById('repSampleId').textContent = sampleId.value || '--';
-            document.getElementById('repTiter').textContent = tcid50PerML.toExponential(2) + ' / mL';
-
-            updateChart(data, startExp);
-        }
-
-        function updateChart(data, startExp) {
-            tcidChart.data.labels = data.map(d => `10⁻${startExp + d.idx}`);
-            tcidChart.data.datasets[0].data = data.map(d => (d.p * 100).toFixed(1));
-            tcidChart.data.datasets[1].data = new Array(data.length).fill(50);
-            tcidChart.update();
-        }
-
-        function buildPlateLayout() {
-            const container = document.getElementById('plateVisualContainer');
-            container.innerHTML = '';
-
-            const numD = parseInt(numDilutions.value) || 8;
-            const wells = parseInt(wellsPerDilution.value) || 8;
-            const startExp = parseInt(startingDilutionExp.value) || 1;
-
-            container.style.gridTemplateColumns = `40px repeat(${numD}, minmax(45px, 1fr))`;
-
-            // Column Headers
-            container.appendChild(document.createElement('div'));
-            for (let c = 0; c < numD; c++) {
-                const hd = document.createElement('div');
-                hd.className = 'plate-header';
-                hd.textContent = `10⁻${startExp + c}`;
-                container.appendChild(hd);
-            }
-
-            const rows = dilutionTableBody.querySelectorAll('tr');
-            const rowsLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-            
-            for (let r = 0; r < wells; r++) {
-                const rLetter = rowsLetters[r] || `R${r+1}`;
-                const rHead = document.createElement('div');
-                rHead.className = 'plate-header';
-                rHead.textContent = rLetter;
-                container.appendChild(rHead);
-
-                for (let c = 0; c < numD; c++) {
-                    const cell = document.createElement('div');
-                    
-                    let currentPosCount = 0;
-                    if (rows[c]) {
-                        currentPosCount = parseInt(rows[c].querySelector('.pos-input').value) || 0;
-                    }
-                    
-                    const isPos = r < currentPosCount;
-                    cell.className = `plate-cell ${isPos ? 'positive' : 'negative'}`;
-                    cell.textContent = `${rLetter}${c+1}`;
-
-                    cell.addEventListener('click', () => {
-                        cell.classList.toggle('positive');
-                        cell.classList.toggle('negative');
-                        updateTableFromPlate(c, numD, wells);
-                    });
-                    cell.setAttribute('data-col', c);
-                    cell.setAttribute('data-row', r);
-                    container.appendChild(cell);
-                }
-            }
-        }
-
-        function updateTableFromPlate(colIndex, numD, wells) {
-            const container = document.getElementById('plateVisualContainer');
-            let positiveCount = 0;
-            
-            for (let r = 0; r < wells; r++) {
-                const cell = container.querySelector(`div[data-col="${colIndex}"][data-row="${r}"]`);
-                if (cell && cell.classList.contains('positive')) {
-                    positiveCount++;
-                }
-            }
-
-            const rows = dilutionTableBody.querySelectorAll('tr');
-            if (rows[colIndex]) {
-                const posInput = rows[colIndex].querySelector('.pos-input');
-                if (posInput) {
-                    posInput.value = positiveCount;
-                    posInput.dispatchEvent(new Event('input'));
-                }
-            }
-        }
-
-        function saveState() {
-            const state = {
-                expName: expName.value, virusName: virusName.value, sampleId: sampleId.value,
-                cellLine: cellLine.value, operator: operator.value, labName: labName.value,
-                notes: notes.value, calcMethod: calcMethod.value, wellsPerDilution: wellsPerDilution.value,
-                dilutionFactor: dilutionFactor.value, startingDilutionExp: startingDilutionExp.value,
-                numDilutions: numDilutions.value, inoculumVolume: inoculumVolume.value,
-                posWells: Array.from(dilutionTableBody.querySelectorAll('.pos-input')).map(i => i.value)
-            };
-            localStorage.setItem('tcid50_v22_state', JSON.stringify(state));
-        }
-
-        function loadState() {
-            const saved = localStorage.getItem('tcid50_v22_state');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    expName.value = data.expName || '';
-                    virusName.value = data.virusName || '';
-                    sampleId.value = data.sampleId || '';
-                    cellLine.value = data.cellLine || '';
-                    operator.value = data.operator || '';
-                    labName.value = data.labName || '';
-                    notes.value = data.notes || '';
-                    calcMethod.value = data.calcMethod || 'spearman-karber';
-                    wellsPerDilution.value = data.wellsPerDilution || 8;
-                    dilutionFactor.value = data.dilutionFactor || 10;
-                    startingDilutionExp.value = data.startingDilutionExp || 1;
-                    numDilutions.value = data.numDilutions || 8;
-                    inoculumVolume.value = data.inoculumVolume || 0.1;
-                    generateTable(data.posWells ? data.posWells.map(Number) : null);
-                    return true;
-                } catch (e) { console.error(e); }
-            }
-            return false;
-        }
-
-        document.getElementById('tbNew').addEventListener('click', () => {
-            if (confirm('Start a new assay project? Unsaved changes will be reset.')) {
-                localStorage.removeItem('tcid50_v22_state');
-                location.reload();
-            }
-        });
-
-        document.getElementById('tbSave').addEventListener('click', () => {
-            saveState();
-            alert('Project saved successfully.');
-        });
-
-        document.getElementById('tbSaveAs').addEventListener('click', () => {
-            const state = localStorage.getItem('tcid50_v22_state');
-            const blob = new Blob([state], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${sampleId.value || 'TCID50_Project'}_v2.2.json`;
-            a.click();
-        });
-
-        document.getElementById('tbOpen').addEventListener('click', () => {
-            document.getElementById('fileInputOpen').click();
-        });
-
-        document.getElementById('fileInputOpen').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                localStorage.setItem('tcid50_v22_state', evt.target.result);
-                loadState();
-            };
-            reader.readAsText(file);
-        });
-
-        document.getElementById('tbExport').addEventListener('click', () => {
-            let csv = [['Dilution', 'Total Wells', 'Positive Wells', 'Negative Wells', 'Ratio']];
-            dilutionTableBody.querySelectorAll('tr').forEach(row => {
-                const cols = row.querySelectorAll('td');
-                csv.push([cols[0].innerText, cols[1].querySelector('input').value, cols[2].querySelector('input').value, cols[3].innerText, cols[4].innerText]);
-            });
-            const blob = new Blob([csv.map(e => e.join(',')).join('\n')], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${sampleId.value || 'assay'}_export.csv`;
-            a.click();
-        });
-
-        document.getElementById('tbPrint').addEventListener('click', () => {
-            document.getElementById('pRepExp').textContent = expName.value || '--';
-            document.getElementById('pRepSample').textContent = sampleId.value || '--';
-            document.getElementById('pRepTiter').textContent = resTCID50ML.textContent;
-            window.print();
-        });
-
-        document.getElementById('tbHelp').addEventListener('click', () => { helpModal.style.display = 'flex'; });
-        document.getElementById('closeHelpModal').addEventListener('click', () => { helpModal.style.display = 'none'; });
-        document.getElementById('tbAbout').addEventListener('click', () => { aboutModal.style.display = 'flex'; });
-        document.getElementById('closeAboutModal').addEventListener('click', () => { aboutModal.style.display = 'none'; });
-
-        generateTableBtn.addEventListener('click', () => generateTable());
-
-        [expName, virusName, sampleId, cellLine, operator, labName, expDate, notes, calcMethod, wellsPerDilution, dilutionFactor, startingDilutionExp, numDilutions, inoculumVolume].forEach(el => {
-            el.addEventListener('input', () => {
-                calculateResults();
-                saveState();
-            });
-        });
-
-        if (!loadState()) {
-            generateTable();
-        }
-    });
-</script>
 
 </body>
 </html>
