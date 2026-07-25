@@ -44,3 +44,26 @@ Building digital tools for the life sciences.
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Version V2.1
+# TCID50 Calculator Professional 🔬
+
+An advanced, self-contained laboratory web application designed for virology research to calculate viral titers accurately using endpoint dilution assays.
+
+---
+
+## 🚀 Key Features (قابلیت‌ها)
+
+- **Advanced Calculation Engine:** Supports both **Spearman-Kärber** and **Reed-Muench** standard virology statistical methods.
+- **Accurate Titer Correction:** Automatically converts endpoint dilution values into positive stock virus titers ($\text{TCID}_{50}/\text{mL}$) and applies precise inoculum volume coefficients.
+- **Interactive 96-Well Plate Layout:** Visual grid simulation allowing users to click wells to toggle positive/negative infection status with real-time table synchronization.
+- **Dynamic Dose-Response Curves:** Interactive charts built with **Chart.js** to visualize infection percentages across dilution tiers alongside 50% threshold lines.
+- **Comprehensive Metadata & Batch Tracking:** Manage experiment details, virus strains, cell lines, operators, and batch identification numbers.
+- **Robust Data Management:** Features local storage auto-saving, JSON project export/import, CSV data export, and an official printable laboratory report format.
+- **Dual UI Themes:** Seamless switching between **Light Scientific** and **Dark Laboratory** visual modes.
+
+---
+
+## 🛠️ Quick Start / Usage (نحوه استفاده)
+
+This application is built as a single, standalone file (`index.html`), requiring no complex server environments or dependency installations.
+
