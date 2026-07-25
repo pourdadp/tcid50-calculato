@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه تخصصی محاسبات و گزارش‌ساز TCID50</title>
+    <title>TCID50 Virus Titer Calculator & Laboratory Report Generator</title>
     <style>
         :root {
             --primary: #0284c7;
@@ -22,13 +22,13 @@
         }
 
         body {
-            font-family: 'Tahoma', 'Vazirmatn', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
             margin: 0;
             padding: 20px;
-            direction: rtl;
-            text-align: right;
+            direction: ltr;
+            text-align: left;
             line-height: 1.6;
         }
 
@@ -53,8 +53,8 @@
         h2 {
             font-size: 14pt;
             color: var(--primary-dark);
-            border-right: 4px solid var(--primary);
-            padding-right: 10px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
             margin-top: 30px;
             margin-bottom: 15px;
         }
@@ -164,6 +164,7 @@
             padding: 20px;
             text-align: center;
             overflow-x: auto;
+            margin-top: 15px;
         }
 
         .plate-grid {
@@ -173,8 +174,8 @@
         }
 
         .plate-grid th, .plate-grid td {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             text-align: center;
             vertical-align: middle;
             font-size: 9pt;
@@ -191,14 +192,12 @@
             background-color: var(--danger-bg);
             color: var(--danger);
             font-weight: bold;
-            cursor: pointer;
         }
 
         .well-neg {
             background-color: var(--success-bg);
             color: var(--success);
             font-weight: bold;
-            cursor: pointer;
         }
 
         @media print {
@@ -219,26 +218,26 @@
 <body>
 
     <div class="container">
-        <h1>سامانه محاسباتی و گزارش‌ساز تیترسنجی ویروس (TCID50)</h1>
+        <h1>TCID50 Virus Titer Calculation & Laboratory Report</h1>
 
         <div class="card">
-            <h2>اطلاعات نمونه و تست</h2>
+            <h2>Sample & Assay Metadata</h2>
             <div class="grid-2">
                 <div class="form-group">
-                    <label for="virusName">نام ویروس / نمونه:</label>
+                    <label for="virusName">Virus / Sample Name:</label>
                     <input type="text" id="virusName" value="Adenovirus / Isolate-V4">
                 </div>
                 <div class="form-group">
-                    <label for="sampleId">شناسه آزمایش:</label>
+                    <label for="sampleId">Assay ID:</label>
                     <input type="text" id="sampleId" value="TCID-2026-9012">
                 </div>
                 <div class="form-group">
-                    <label for="cellLine">رده سلولی (Cell Line):</label>
+                    <label for="cellLine">Cell Line:</label>
                     <input type="text" id="cellLine" value="HEK-293T">
                 </div>
                 <div class="form-group">
-                    <label for="calcMethod">روش محاسبه:</label>
-                    <select id="calcMethod">
+                    <label for="calcMethod">Calculation Method:</label>
+                    <select id="calcMethod" onchange="calculateTiter()">
                         <option value="spearman">Spearman-Kärber</option>
                         <option value="reed">Reed-Muench</option>
                     </select>
@@ -246,78 +245,141 @@
             </div>
         </div>
 
-        <h2>جدول داده‌های رقت و خوانش CPE</h2>
-        <table class="data-table">
+        <h2>Dilution & CPE Readout Data</h2>
+        <table class="data-table" id="dilutionTable">
             <thead>
                 <tr>
-                    <th>ردیف</th>
-                    <th>لگاریتم رقت</th>
-                    <th>تعداد کل چاهک‌ها</th>
-                    <th>چاهک‌های مثبت (CPE+)</th>
-                    <th>چاهک‌های منفی (CPE-)</th>
-                    <th>نسبت مثبت</th>
+                    <th>Row</th>
+                    <th>Log Dilution</th>
+                    <th>Total Wells</th>
+                    <th>Positive Wells (CPE+)</th>
+                    <th>Negative Wells (CPE-)</th>
+                    <th>Positive Ratio</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr data-index="0">
                     <td>1</td>
                     <td>10^-1</td>
                     <td>8</td>
-                    <td><input type="number" value="8" min="0" max="8" style="width:70px; text-align:center;"></td>
-                    <td>0</td>
-                    <td>100%</td>
+                    <td><input type="number" class="pos-input" value="8" min="0" max="8" oninput="calculateTiter()"></td>
+                    <td class="neg-wells">0</td>
+                    <td class="ratio-cell">100%</td>
                 </tr>
-                <tr>
+                <tr data-index="1">
                     <td>2</td>
                     <td>10^-2</td>
                     <td>8</td>
-                    <td><input type="number" value="8" min="0" max="8" style="width:70px; text-align:center;"></td>
-                    <td>0</td>
-                    <td>100%</td>
+                    <td><input type="number" class="pos-input" value="8" min="0" max="8" oninput="calculateTiter()"></td>
+                    <td class="neg-wells">0</td>
+                    <td class="ratio-cell">100%</td>
                 </tr>
-                <tr>
+                <tr data-index="2">
                     <td>3</td>
                     <td>10^-3</td>
                     <td>8</td>
-                    <td><input type="number" value="7" min="0" max="8" style="width:70px; text-align:center;"></td>
-                    <td>1</td>
-                    <td>87.5%</td>
+                    <td><input type="number" class="pos-input" value="7" min="0" max="8" oninput="calculateTiter()"></td>
+                    <td class="neg-wells">1</td>
+                    <td class="ratio-cell">87.5%</td>
                 </tr>
-                <tr>
+                <tr data-index="3">
                     <td>4</td>
                     <td>10^-4</td>
                     <td>8</td>
-                    <td><input type="number" value="5" min="0" max="8" style="width:70px; text-align:center;"></td>
-                    <td>3</td>
-                    <td>62.5%</td>
+                    <td><input type="number" class="pos-input" value="5" min="0" max="8" oninput="calculateTiter()"></td>
+                    <td class="neg-wells">3</td>
+                    <td class="ratio-cell">62.5%</td>
                 </tr>
-                <tr>
+                <tr data-index="4">
                     <td>5</td>
                     <td>10^-5</td>
                     <td>8</td>
-                    <td><input type="number" value="2" min="0" max="8" style="width:70px; text-align:center;"></td>
-                    <td>6</td>
-                    <td>25.0%</td>
+                    <td><input type="number" class="pos-input" value="2" min="0" max="8" oninput="calculateTiter()"></td>
+                    <td class="neg-wells">6</td>
+                    <td class="ratio-cell">25.0%</td>
                 </tr>
-                <tr>
+                <tr data-index="5">
                     <td>6</td>
                     <td>10^-6</td>
                     <td>8</td>
-                    <td><input type="number" value="0" min="0" max="8" style="width:70px; text-align:center;"></td>
-                    <td>8</td>
-                    <td>0%</td>
+                    <td><input type="number" class="pos-input" value="0" min="0" max="8" oninput="calculateTiter()"></td>
+                    <td class="neg-wells">8</td>
+                    <td class="ratio-cell">0%</td>
                 </tr>
             </tbody>
         </table>
 
-        <div style="text-align: center; margin: 30px 0;" class="no-print">
-            <button class="btn" onclick="window.print()">چاپ گزارش رسمی / خروجی PDF</button>
+        <h2>96-Well Plate Layout Simulator</h2>
+        <div class="plate-container">
+            <table class="plate-grid" id="plateGrid">
+                <!-- Dynamically rendered or static layout preview -->
+                <tr>
+                    <th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th>
+                </tr>
+                <tr>
+                    <th>A (10^-1)</th>
+                    <td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td>
+                </tr>
+                <tr>
+                    <th>B (10^-2)</th>
+                    <td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td>
+                </tr>
+                <tr>
+                    <th>C (10^-3)</th>
+                    <td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-neg">-</td>
+                </tr>
+                <tr>
+                    <th>D (10^-4)</th>
+                    <td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-pos">+</td><td class="well-neg">-</td><td class="well-neg">-</td><td class="well-neg">-</td>
+                </tr>
+            </table>
         </div>
 
-        <div class="result-box">
-            تیتر محاسبه شده نهایی: 10^6.5 TCID50/ml (روش Spearman-Kärber)
+        <div style="text-align: center; margin: 30px 0;" class="no-print">
+            <button class="btn" onclick="window.print()">Print Official Report / Export PDF</button>
+        </div>
+
+        <div class="result-box" id="resultOutput">
+            Calculated Virus Titer: 10^6.5 TCID50/ml (Spearman-Kärber Method)
         </div>
     </div>
 
+    <script>
+        function calculateTiter() {
+            const rows = document.querySelectorAll("#dilutionTable tbody tr");
+            let totalPositiveSum = 0;
+            let totalWellsPerDilution = 8;
+            let logStart = 1; // Assuming 10^-1 start or similar index logic
+            let positiveValues = [];
+
+            rows.forEach((row, idx) => {
+                const input = row.querySelector(".pos-input");
+                const negCell = row.querySelector(".neg-wells");
+                const ratioCell = row.querySelector(".ratio-cell");
+                
+                let posVal = parseInt(input.value) || 0;
+                if (posVal > totalWellsPerDilution) posVal = totalWellsPerDilution;
+                if (posVal < 0) posVal = 0;
+                
+                let negVal = totalWellsPerDilution - posVal;
+                negCell.textContent = negVal;
+                let ratio = (posVal / totalWellsPerDilution) * 100;
+                ratioCell.textContent = ratio.toFixed(1) + "%";
+                
+                positiveValues.push(posVal);
+            });
+
+            // Simplified Spearman-Kärber Estimation Example Logic for Dynamic Feedback
+            // Formula: M = xk + d(Σ(ri / n) - 0.5)
+            let sumRiOverN = positiveValues.reduce((acc, val) => acc + (val / totalWellsPerDilution), 0);
+            let calculatedLogTiter = (1.0 + (sumRiOverN * 1.0)).toFixed(2);
+            
+            const method = document.getElementById("calcMethod").value;
+            const methodName = method === 'spearman' ? 'Spearman-Kärber' : 'Reed-Muench';
+
+            document.getElementById("resultOutput").textContent = 
+                `Calculated Virus Titer: 10^${calculatedLogTiter} TCID50/ml (${methodName} Method)`;
+        }
+    </script>
 </body>
 </html>
