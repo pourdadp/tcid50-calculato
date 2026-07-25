@@ -8,13 +8,17 @@
         :root {
             --primary: #0284c7;
             --primary-dark: #0369a1;
+            --primary-light: #e0f2fe;
             --success: #166534;
             --success-bg: #dcfce7;
             --danger: #991b1b;
             --danger-bg: #fee2e2;
-            --bg-main: #f8fafc;
-            --text-main: #1e293b;
+            --bg-main: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
             --border: #cbd5e1;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
         }
 
         *, *::before, *::after {
@@ -22,60 +26,83 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 30px 20px;
             direction: ltr;
             text-align: left;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 0 auto;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            border: 1px solid #e2e8f0;
         }
 
-        /* Report Header (Hidden in UI, visible on print) */
         .report-header-print {
             display: none;
         }
 
+        .header-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
         h1 {
-            font-size: 20pt;
-            color: #0f172a;
-            border-bottom: 3px solid var(--primary);
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 25px;
+            font-size: 22pt;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .badge-system {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 8.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         h2 {
             font-size: 13pt;
+            font-weight: 700;
             color: var(--primary-dark);
             border-left: 4px solid var(--primary);
-            padding-left: 10px;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            padding-left: 12px;
+            margin-top: 35px;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .card {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
         }
 
         .form-group {
@@ -84,169 +111,190 @@
 
         label {
             display: block;
-            font-weight: bold;
-            font-size: 9.5pt;
-            color: #475569;
+            font-weight: 600;
+            font-size: 9pt;
+            color: var(--text-muted);
             margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         input, select {
             width: 100%;
-            padding: 10px;
+            padding: 11px 14px;
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             font-family: inherit;
             font-size: 10pt;
             background: #fff;
+            color: var(--text-main);
+            transition: all 0.2s ease;
         }
 
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
         }
 
         table.data-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            margin-bottom: 20px;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            margin-bottom: 25px;
             font-size: 9.5pt;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         table.data-table th {
-            background-color: var(--primary-dark);
+            background-color: #0f172a;
             color: white;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
-            border: 1px solid var(--primary-dark);
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         table.data-table td {
-            padding: 8px 10px;
-            border: 1px solid var(--border);
+            padding: 10px 12px;
+            border-top: 1px solid var(--border);
             text-align: center;
+            background: #fff;
         }
 
-        table.data-table tr:nth-child(even) {
+        table.data-table tr:hover td {
             background-color: #f8fafc;
         }
 
         .btn {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 10.5pt;
-            font-weight: bold;
-            border-radius: 6px;
+            font-weight: 700;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
             display: inline-block;
             text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2);
         }
 
         .btn:hover {
-            background-color: var(--primary-dark);
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(2, 132, 199, 0.3);
         }
 
         .result-box {
-            background: var(--success-bg);
-            border: 1px solid #bbf7d0;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #a7f3d0;
             color: var(--success);
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-size: 12pt;
-            font-weight: bold;
-            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 12.5pt;
+            font-weight: 800;
+            margin-top: 25px;
             text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(22, 101, 52, 0.05);
+            letter-spacing: -0.3px;
         }
 
         .plate-container {
             background: #ffffff;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 25px;
             text-align: center;
             overflow-x: auto;
             margin-top: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
         }
 
         .plate-grid {
             display: inline-block;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 2px;
             margin: 0 auto;
         }
 
         .plate-grid th, .plate-grid td {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             text-align: center;
             vertical-align: middle;
             font-size: 9pt;
-            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-weight: 600;
         }
 
         .plate-grid th {
             background-color: #f1f5f9;
-            color: #475569;
-            font-weight: bold;
+            color: var(--text-muted);
+            font-weight: 700;
+            border: 1px solid var(--border);
         }
 
         .well-pos {
             background-color: var(--danger-bg);
             color: var(--danger);
-            font-weight: bold;
+            border: 1px solid #fecaca;
         }
 
         .well-neg {
             background-color: var(--success-bg);
             color: var(--success);
-            font-weight: bold;
+            border: 1px solid #bbf7d0;
         }
 
         .legend {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
+            gap: 25px;
+            margin-top: 20px;
             font-size: 9pt;
-            font-weight: bold;
+            font-weight: 700;
+            color: var(--text-muted);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .legend-box {
-            width: 18px;
-            height: 18px;
-            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
             border: 1px solid var(--border);
         }
 
         .signature-section {
             display: none;
-            margin-top: 40px;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
+            margin-top: 50px;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 25px;
         }
 
         .sig-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
+            gap: 60px;
         }
 
         .sig-box {
             font-size: 9.5pt;
-            color: #475569;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         .sig-line {
-            margin-top: 40px;
+            margin-top: 50px;
             border-bottom: 1px dashed var(--border);
         }
 
@@ -259,32 +307,27 @@
                 box-shadow: none;
                 padding: 0;
                 max-width: 100%;
+                border: none;
             }
             .no-print {
                 display: none !important;
             }
             .report-header-print {
                 display: block;
-                margin-bottom: 20px;
+                margin-bottom: 25px;
                 border-bottom: 2px solid var(--primary);
-                padding-bottom: 10px;
+                padding-bottom: 15px;
             }
             .signature-section {
                 display: block;
                 page-break-inside: avoid;
             }
-            input {
+            input, select {
                 border: none;
                 background: transparent;
                 padding: 0;
                 font-weight: bold;
-            }
-            select {
-                border: none;
-                background: transparent;
-                appearance: none;
-                padding: 0;
-                font-weight: bold;
+                color: #000;
             }
         }
     </style>
@@ -294,11 +337,17 @@
     <div class="container">
         <!-- Print-only Report Header -->
         <div class="report-header-print">
-            <h2 style="margin:0; color:#0f172a; border:none; padding:0;">OFFICIAL LABORATORY ASSAY REPORT</h2>
+            <h2 style="margin:0; color:#0f172a; border:none; padding:0; font-size:16pt;">OFFICIAL LABORATORY ASSAY REPORT</h2>
             <p style="margin:4px 0 0 0; font-size:9pt; color:#64748b;">TCID50 Viral Titer Quantification System | Quality Assurance Department</p>
         </div>
 
-        <h1>TCID50 Virus Titer Calculation & Laboratory Report</h1>
+        <div class="header-banner no-print">
+            <div>
+                <h1>TCID50 Virus Titer Calculator</h1>
+                <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 9.5pt;">Automated quantitative virology analysis & certified reporting suite</p>
+            </div>
+            <div class="badge-system">Bioinformatics Suite v0.9</div>
+        </div>
 
         <div class="card">
             <h2>Sample & Assay Metadata</h2>
@@ -394,9 +443,9 @@
             <table class="plate-grid" id="plateGrid">
                 <!-- Dynamically populated plate layout -->
             </table>
-            <div class="legend no-print">
-                <div class="legend-item"><div class="legend-box" style="background: var(--danger-bg); color: var(--danger);">+</div> CPE Positive</div>
-                <div class="legend-item"><div class="legend-box" style="background: var(--success-bg); color: var(--success);">-</div> CPE Negative</div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-box" style="background: var(--danger-bg); color: var(--danger);"></div> CPE Positive (+)</div>
+                <div class="legend-item"><div class="legend-box" style="background: var(--success-bg); color: var(--success);"></div> CPE Negative (-)</div>
             </div>
         </div>
 
@@ -404,8 +453,8 @@
             Calculated Virus Titer: Loading...
         </div>
 
-        <div style="text-align: center; margin: 30px 0;" class="no-print">
-            <button class="btn" onclick="window.print()">Generate Official Laboratory Report & Print</button>
+        <div style="text-align: center; margin: 35px 0;" class="no-print">
+            <button class="btn" onclick="window.print()">Generate Official Laboratory Report & Print / PDF</button>
         </div>
 
         <!-- Official Sign-off Section for Printed Reports -->
@@ -517,4 +566,3 @@
     </script>
 </body>
 </html>
-
