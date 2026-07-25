@@ -16,7 +16,7 @@ Uses the standard **Kärber method** to compute **log₁₀(TCID₅₀)** and **
 ## 🚀 Live Demo
 
 👉 **[Launch TCID₅₀ Calculator](https://pourdadp.github.io/tcid50-calculato/main)**
-👉 **[Launch TCID₅₀ Calculator](https://pourdadp.github.io/tcid50-calculato/tcid50V2.0.html)**
+👉 **[Launch TCID₅₀ Calculator](https://pourdadp.github.io/tcid50-calculato/Tcid50V2.html)**
 
 ## 🛠️ Tech Stack
 
